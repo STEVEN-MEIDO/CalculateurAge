@@ -1,24 +1,31 @@
-﻿namespace CalculateurAge
+﻿namespace CalculateurAge;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public MainPage()
     {
-        int count = 0;
+        InitializeComponent();
+    }
 
-        public MainPage()
+    // Gestionnaire appelé au clic du bouton Calculer.
+    private async void OnCalculerClicked(object sender, EventArgs e)
+    {
+        // Validation : on refuse un nom vide.
+        if (string.IsNullOrWhiteSpace(entryNom.Text))
         {
-            InitializeComponent();
+            await DisplayAlertAsync("Erreur", "Entrez un nom.", "OK");
+            return; // On sort sans rien calculer
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
-        {
-            count++;
+        DateTime d = pickerDate.Date ?? DateTime.Today;
+        int age = DateTime.Today.Year - d.Year;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+        // Si l'anniversaire n'est pas encore passé cette année,
+        // on retire une année.
+        if (d.Date > DateTime.Today.AddYears(-age)) age--;
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+        // On écrit DIRECTEMENT dans les contrôles (Phase A)
+        lblResultat.Text = $"{entryNom.Text}, vous avez {age} ans";
+        lblResultat.IsVisible = true;
     }
 }
